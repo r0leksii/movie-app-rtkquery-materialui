@@ -1,15 +1,19 @@
-// selectedGenreSlice.js
 import { createSlice } from '@reduxjs/toolkit'
 
-const selectedGenreSlice = createSlice({
+const initialState = {
+  genreId: '',
+}
+
+export const selectedGenreSlice = createSlice({
   name: 'selectedGenre',
-  initialState: null,
+  initialState,
   reducers: {
-    setSelectedGenre: (state, action) => action.payload,
-    clearSelectedGenre: () => null,
+    setSelectedGenre: (state, action) => {
+      state.genreId = action.payload
+    },
   },
 })
 
-export const { setSelectedGenre, clearSelectedGenre } =
-  selectedGenreSlice.actions
+export const { setSelectedGenre } = selectedGenreSlice.actions
+
 export const selectedGenreReducer = selectedGenreSlice.reducer

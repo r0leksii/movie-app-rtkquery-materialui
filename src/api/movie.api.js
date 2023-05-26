@@ -13,18 +13,18 @@ export const movieApi = createApi({
   }),
   endpoints: (builder) => ({
     getMovies: builder.query({
-      query: (page = 1, genreId) => ({
+      query: (page = 1) => ({
         url: 'discover/movie',
         params: {
           language: 'en-US',
-          include_adult: false,
-          include_video: true,
-          page,
           sort_by: 'popularity.desc',
-          with_genres: genreId,
+          include_adult: false,
+          include_video: false,
+          page,
         },
       }),
     }),
+
     getGenres: builder.query({
       query: () => ({
         url: 'genre/movie/list',
