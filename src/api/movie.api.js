@@ -1,0 +1,63 @@
+import { createApi } from '@reduxjs/toolkit/query/react'
+import axios from 'axios'
+
+const MOVIE_API_KEY = process.env.REACT_APP_TMDB_API_KEY
+
+export const movieApi = createApi({
+  reducerPath: 'movieApi',
+  baseQuery: axios.create({
+    baseURL: 'https://api.themoviedb.org/3/',
+    params: {
+      api_key: MOVIE_API_KEY,
+    },
+  }),
+  endpoints: (builder) => ({
+    getMovies: builder.query({
+      query: (page = 1, genreId) => ({
+        url: 'discover/movie',
+        params: {
+          language: 'en-US',
+          include_adult: false,
+          include_video: true,
+          page,
+          sort_by: 'popularity.desc',
+          with_genres: genreId,
+        },
+      }),
+    }),
+    getGenres: builder.query({
+      query: () => ({
+        url: 'genre/movie/list',
+        params: {
+          language: 'en-US',
+        },
+      }),
+    }),
+    getActors: builder.query({
+      query: (movieId) => ({
+        url: `movie/${movieId}/credits`,
+        params: {
+          language: 'en-US',
+        },
+      }),
+    }),
+    getSearchedMovies: builder.query({
+      query: (searchTerm) => ({
+        url: 'search/movie',
+        params: {
+          language: 'en-US',
+          include_adult: false,
+          query: searchTerm,
+          page: 1,
+        },
+      }),
+    }),
+  }),
+})
+
+export const {
+  useGetMoviesQuery,
+  useGetGenresQuery,
+  useGetActorsQuery,
+  useGetSearchedMoviesQuery,
+} = movieApi
