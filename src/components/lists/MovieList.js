@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useGetMoviesQuery } from '../../api/movie.api'
+import { useGetMoviesQuery, useGetGenresQuery } from '../../api/movie.api'
 import { MovieCard } from '../cards/MovieCard'
 import { Grid } from '@mui/material'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -10,17 +10,28 @@ export const MovieList = () => {
   const [movies, setMovies] = useState([])
   const [hasMore, setHasMore] = useState(true)
 
-  const selectedGenreId = useSelector((state) => state.selectedGenre.genreId)
+  const selectedGenreIds = useSelector((state) => state.selectedGenre.genreIds)
 
   const {
     data: movieData,
     isLoading: isFetchingMovies,
     isError: isErrorMovies,
-  } = useGetMoviesQuery(page)
+  } = useGetMoviesQuery({ page, genreIds: selectedGenreIds.join(',') })
+
+  const { data: allGenres } = useGetGenresQuery()
+
+  useEffect(() => {
+    setMovies([])
+    setPage(1)
+  }, [selectedGenreIds])
 
   useEffect(() => {
     if (movieData && movieData.results) {
-      setMovies((prevMovies) => [...prevMovies, ...movieData.results])
+      if (movieData.page === 1) {
+        setMovies(movieData.results)
+      } else {
+        setMovies((prevMovies) => [...prevMovies, ...movieData.results])
+      }
       setHasMore(movieData.page < movieData.total_pages)
     }
   }, [movieData])
@@ -29,17 +40,27 @@ export const MovieList = () => {
     setPage((prevPage) => prevPage + 1)
   }
 
-  const displayedMovies = selectedGenreId
-    ? movies.filter((movie) => movie.genre_ids.includes(selectedGenreId))
-    : movies
-
   if (isErrorMovies) return <div>Error loading data.</div>
-  if (!displayedMovies.length && isFetchingMovies) return <div>Loading...</div>
+  if (isFetchingMovies && movies.length === 0) return <div>Loading...</div>
+
+  let selectedGenreNames = []
+  if (allGenres && allGenres.genres && selectedGenreIds.length > 0) {
+    selectedGenreNames = allGenres.genres
+      .filter((genre) => selectedGenreIds.includes(genre.id))
+      .map((genre) => genre.name)
+  }
+
+  console.log('selectedGenreIds', selectedGenreIds)
+  console.log('movieData', movieData)
+  console.log('movies', movies)
 
   return (
     <>
+      {selectedGenreNames.length > 0 && (
+        <h2>Selected Genres: {selectedGenreNames.join(', ')}</h2>
+      )}
       <InfiniteScroll
-        dataLength={displayedMovies.length}
+        dataLength={movies.length}
         hasMore={hasMore}
         next={loadMore}
         loader={<h4>Loading more movies...</h4>}
@@ -50,7 +71,7 @@ export const MovieList = () => {
         }
       >
         <Grid container spacing={2}>
-          {displayedMovies.map((movie, index) => (
+          {movies.map((movie, index) => (
             <Grid
               item
               xs={12}

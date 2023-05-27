@@ -3,17 +3,19 @@ import axios from 'axios'
 
 const MOVIE_API_KEY = process.env.REACT_APP_TMDB_API_KEY
 
+const api = axios.create({
+  baseURL: 'https://api.themoviedb.org/3/',
+  params: {
+    api_key: MOVIE_API_KEY,
+  },
+})
+
 export const movieApi = createApi({
   reducerPath: 'movieApi',
-  baseQuery: axios.create({
-    baseURL: 'https://api.themoviedb.org/3/',
-    params: {
-      api_key: MOVIE_API_KEY,
-    },
-  }),
+  baseQuery: api,
   endpoints: (builder) => ({
     getMovies: builder.query({
-      query: (page = 1) => ({
+      query: ({ page = 1, genreIds = '' }) => ({
         url: 'discover/movie',
         params: {
           language: 'en-US',
@@ -21,6 +23,7 @@ export const movieApi = createApi({
           include_adult: false,
           include_video: false,
           page,
+          with_genres: genreIds,
         },
       }),
     }),
@@ -33,6 +36,7 @@ export const movieApi = createApi({
         },
       }),
     }),
+
     getActors: builder.query({
       query: (movieId) => ({
         url: `movie/${movieId}/credits`,
@@ -41,6 +45,7 @@ export const movieApi = createApi({
         },
       }),
     }),
+
     getSearchedMovies: builder.query({
       query: (searchTerm) => ({
         url: 'search/movie',

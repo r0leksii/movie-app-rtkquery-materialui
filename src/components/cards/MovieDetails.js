@@ -22,8 +22,16 @@ export const MovieDetails = ({ movie }) => {
         <div className="movie-actors">
           <h2>Actors</h2>
           <Grid container spacing={2}>
-            {actors.map(({ name, profile_path }) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={actors.id}>
+            {actors.map(({ id, name, profile_path }, index) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+                xl={2}
+                key={`${id}-${index}`}
+              >
                 <div key={name} className="actor-details">
                   {profile_path ? (
                     <img
