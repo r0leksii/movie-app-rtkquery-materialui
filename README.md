@@ -13,8 +13,8 @@ The application includes a variety of features that allow users to interact with
 
 ## Screenshots
 
-![Screenshot 1](https://postimg.cc/wyB177rc)
-[Web-capture-28-5-2023-225743-localhost.jpg](https://postimg.cc/D8G8JVxD)
+![Web capture_28-5-2023_22503_localhost](https://github.com/r0leksii/movie-app-rtkquery-materialui/assets/108926634/bc90e26c-1ebf-4f2d-b8d1-7866f4595e42)
+![Web capture_28-5-2023_225743_localhost](https://github.com/r0leksii/movie-app-rtkquery-materialui/assets/108926634/e5e1547f-8df5-41bf-8981-c7257646f208)
 
 ## Technologies
 
