@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { setSearchTerm, clearSearchTerm } from '../../store/searchSlice'
 import { Input } from '@mui/material'
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 
 export const SearchBar = () => {
   const dispatch = useDispatch()
@@ -32,7 +33,14 @@ export const SearchBar = () => {
   }
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '0.5rem',
+      }}
+    >
       <Input
         type="text"
         value={localTerm}
@@ -46,6 +54,6 @@ export const SearchBar = () => {
       <Button variant="outlined" onClick={handleClear} disabled={!localTerm}>
         Clear
       </Button>
-    </div>
+    </Box>
   )
 }

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useGetMoviesQuery, useGetGenresQuery } from '../../api/movie.api'
-import { MovieCard } from '../cards/MovieCard'
-import { Grid } from '@mui/material'
+import { MovieGrid } from '../utils/MovieGrid'
+import { Typography } from '@mui/material'
+import { red } from '@mui/material/colors'
 import InfiniteScroll from 'react-infinite-scroll-component'
+
+const colorRed = red[500]
 
 export const MovieList = () => {
   const [page, setPage] = useState(1)
@@ -40,8 +43,19 @@ export const MovieList = () => {
     setPage((prevPage) => prevPage + 1)
   }
 
-  if (isErrorMovies) return <div>Error loading data.</div>
-  if (isFetchingMovies && movies.length === 0) return <div>Loading...</div>
+  if (isErrorMovies)
+    return (
+      <Typography
+        component="p"
+        sx={{
+          color: colorRed,
+        }}
+      >
+        Error loading data.
+      </Typography>
+    )
+  if (isFetchingMovies && movies.length === 0)
+    return <Typography component="p">Loading...</Typography>
 
   let selectedGenreNames = []
   if (allGenres && allGenres.genres && selectedGenreIds.length > 0) {
@@ -57,34 +71,22 @@ export const MovieList = () => {
   return (
     <>
       {selectedGenreNames.length > 0 && (
-        <h2>Selected Genres: {selectedGenreNames.join(', ')}</h2>
+        <Typography variant="h3" component="h2">
+          Selected Genres: {selectedGenreNames.join(', ')}
+        </Typography>
       )}
       <InfiniteScroll
         dataLength={movies.length}
         hasMore={hasMore}
         next={loadMore}
-        loader={<h4>Loading more movies...</h4>}
+        loader={<Typography component="p">Loading more movies...</Typography>}
         endMessage={
-          <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
-          </p>
+          <Typography component="p" style={{ textAlign: 'center' }}>
+            Yay! You have seen it all
+          </Typography>
         }
       >
-        <Grid container spacing={2}>
-          {movies.map((movie, index) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              lg={3}
-              xl={2}
-              key={`${movie.id}-${index}`}
-            >
-              <MovieCard movie={movie} />
-            </Grid>
-          ))}
-        </Grid>
+        <MovieGrid movies={movies} />
       </InfiniteScroll>
     </>
   )

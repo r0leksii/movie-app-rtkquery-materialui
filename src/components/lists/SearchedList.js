@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useGetSearchedMoviesQuery } from '../../api/movie.api'
-import { MovieCard } from '../cards/MovieCard'
-import { Grid } from '@mui/material'
+import { MovieGrid } from '../utils/MovieGrid'
+import { Typography } from '@mui/material'
 
 export const SearchedList = () => {
   const searchTerm = useSelector((state) => state.search.term)
@@ -13,20 +13,19 @@ export const SearchedList = () => {
     isError,
   } = useGetSearchedMoviesQuery(searchTerm)
 
-  if (isError) return <div>Error loading data.</div>
-  if (isLoading || !searchResultData) return <div>Loading...</div>
+  if (isError) return <Typography component="p">Error loading data.</Typography>
+  if (isLoading || !searchResultData)
+    return <Typography component="p">Loading...</Typography>
 
   const searchResults = searchResultData.results
 
-  if (searchResults.length === 0) return <div>No results found.</div>
+  if (searchResults.length === 0)
+    return <Typography component="p">No results found.</Typography>
 
   return (
-    <Grid container spacing={2}>
-      {searchResults.map((movie) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={movie.id}>
-          <MovieCard movie={movie} />
-        </Grid>
-      ))}
-    </Grid>
+    <>
+      <Typography variant="h3">Search results for "{searchTerm}"</Typography>
+      <MovieGrid movies={searchResults} />
+    </>
   )
 }

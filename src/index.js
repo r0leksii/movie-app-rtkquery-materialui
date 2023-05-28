@@ -11,14 +11,18 @@ import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 import CssBaseline from '@mui/material/CssBaseline'
 import Container from '@mui/material/Container'
+import { ThemeProvider } from '@mui/material/styles'
+import { theme } from '../src/components/utils/theme'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <Provider store={store}>
-    <CssBaseline />
-    <Container maxWidth="xl">
-      <App />
-    </Container>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container maxWidth="xl">
+        <App />
+      </Container>
+    </ThemeProvider>
   </Provider>
 )
 

@@ -1,8 +1,9 @@
 import { useGetGenresQuery, useGetActorsQuery } from '../../api/movie.api'
 import { mapGenreIdsToNames } from '../utils/genresUtils'
 import { mapActorDataToNames } from '../utils/actorsUtils'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { Grid } from '@mui/material'
+import { Image } from 'mui-image'
 
 export const MovieDetails = ({ movie }) => {
   const { data: genresData } = useGetGenresQuery()
@@ -14,13 +15,42 @@ export const MovieDetails = ({ movie }) => {
 
   const actors = actorsData ? mapActorDataToNames(actorsData) : []
 
+  const stylesHeaderThree = {
+    marginTop: '1rem',
+    marginBottom: '0.5rem',
+    fontSize: '1.5rem',
+    fontWight: 700,
+    lineHeight: 1.2,
+  }
+
   return (
     <Box>
-      <h2>Genres</h2>
-      <p className="movie-genres">{genreNames}</p>
+      <Typography variant="h3" sx={stylesHeaderThree}>
+        {movie.title} ({movie.release_date.slice(0, 4)})
+      </Typography>
+      <Typography component="p">
+        {movie.release_date ? movie.release_date : 'No release date available.'}
+      </Typography>
+      <Typography component="p">
+        {movie.vote_average
+          ? `Rating: ${movie.vote_average} / 10`
+          : 'No rating available.'}
+      </Typography>
+      <Typography variant="h3" sx={stylesHeaderThree}>
+        Genres:
+      </Typography>
+      <Typography>{genreNames}</Typography>
+      <Typography component="h3" sx={stylesHeaderThree}>
+        Overview:
+      </Typography>
+      <Typography variaant="p">
+        {movie.overview ? movie.overview : 'No overview available.'}
+      </Typography>
       {actors.length > 0 && (
-        <div className="movie-actors">
-          <h2>Actors</h2>
+        <Box>
+          <Typography component="h3" sx={stylesHeaderThree}>
+            Actors:
+          </Typography>
           <Grid container spacing={2}>
             {actors.map(({ id, name, profile_path }, index) => (
               <Grid
@@ -32,24 +62,24 @@ export const MovieDetails = ({ movie }) => {
                 xl={2}
                 key={`${id}-${index}`}
               >
-                <div key={name} className="actor-details">
+                <Box key={name}>
                   {profile_path ? (
-                    <img
-                      src={`https://image.tmdb.org/t/p/w45${profile_path}`}
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w185${profile_path}`}
                       alt={name}
                     />
                   ) : (
-                    <img
+                    <Image
                       src="https://via.placeholder.com/45x68?text=No+Image"
                       alt="placeholder"
                     />
                   )}
-                  <p>{name}</p>
-                </div>
+                  <Typography component="p">{name}</Typography>
+                </Box>
               </Grid>
             ))}
           </Grid>
-        </div>
+        </Box>
       )}
     </Box>
   )

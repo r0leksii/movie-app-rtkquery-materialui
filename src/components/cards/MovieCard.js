@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { useFavorites } from '../utils/useFavorites'
 import { MovieDetails } from './MovieDetails'
-import { useDispatch } from 'react-redux'
-import { addToFavorites, removeFromFavorites } from '../../store/favoritesSlice'
-import styles from './MovieCard.module.scss'
-import Card from '@mui/material/Card'
+import { Box, Card, Typography } from '@mui/material'
 import CardContent from '@mui/material/CardContent'
 import Checkbox from '@mui/material/Checkbox'
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
@@ -12,7 +10,8 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Favorite from '@mui/icons-material/Favorite'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
-import Box from '@mui/material/Box'
+import Image from 'mui-image'
+import CardActions from '@mui/material/CardActions'
 
 const label = { inputProps: { 'aria-label': 'Add to favorites' } }
 
@@ -21,46 +20,19 @@ export const MovieCard = ({ movie }) => {
     year: 'numeric',
   })
 
-  const dispatch = useDispatch()
-
-  const [isFavorite, setIsFavorite] = useState(false)
-
-  useEffect(() => {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || []
-    setIsFavorite(favorites.some((favorite) => favorite.id === movie.id))
-  }, [movie.id])
-
-  const handleFavoriteChange = (event) => {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || []
-
-    if (event.target.checked) {
-      if (!favorites.some((favorite) => favorite.id === movie.id)) {
-        // Add the movie to favorites if it's not already there
-        favorites.push(movie)
-        dispatch(addToFavorites(movie))
-      }
-    } else {
-      // Remove the movie from favorites
-      const index = favorites.findIndex((favorite) => favorite.id === movie.id)
-      if (index !== -1) {
-        favorites.splice(index, 1)
-        dispatch(removeFromFavorites(movie))
-      }
-    }
-
-    localStorage.setItem('favorites', JSON.stringify(favorites))
-    setIsFavorite(event.target.checked)
-  }
+  const { isFavorite, handleFavoriteChange } = useFavorites(movie)
 
   const style = {
     position: 'absolute',
-    top: '50%',
+    top: '0',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
+    transform: 'translate(-50%, 0)',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    width: '70%',
+    height: 'auto',
   }
 
   const [open, setOpen] = useState(false)
@@ -68,58 +40,103 @@ export const MovieCard = ({ movie }) => {
   const handleClose = () => setOpen(false)
 
   return (
-    <Card>
-      <CardContent
-        sx={{
-          padding: 1,
-        }}
-      >
-        <div className={styles.movieCard}>
-          {movie.poster_path ? (
-            <img
-              className={styles.moviePoster}
+    <Card
+      sx={{
+        padding: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        height: '100%',
+      }}
+    >
+      <CardContent>
+        {movie.poster_path ? (
+          <Box
+            sx={{
+              marginBottom: '1rem',
+            }}
+          >
+            <Image
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
             />
-          ) : (
-            <img
+          </Box>
+        ) : (
+          <Box>
+            <Image
               src="https://via.placeholder.com/500x750?text=No+Image"
               alt="placeholder"
             />
-          )}
+          </Box>
+        )}
 
-          <div className="movie-details">
-            <h2 className="movie-title">{movie.title}</h2>
-            <p className="movie-release-date">{releaseDate}</p>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    {...label}
-                    icon={<FavoriteBorder />}
-                    checkedIcon={<Favorite />}
-                    checked={isFavorite} // Add this line
-                    onChange={handleFavoriteChange} // Add this line
-                  />
-                }
-                label="Add to favorites"
-              />
-            </FormGroup>
-            <Button onClick={handleOpen}>Details</Button>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={style}>
-                <MovieDetails movie={movie} />
-                <Button onClick={handleClose}>Close</Button>
-              </Box>
-            </Modal>
-          </div>
-        </div>
+        <Box
+          sx={{
+            padding: 1,
+          }}
+        >
+          <Typography
+            variant="h3"
+            gutterBottom
+            sx={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              lineHeight: '1.2',
+              letterSpacing: '0.0075em',
+            }}
+          >
+            {movie.title}
+          </Typography>
+          <Typography component="p">{releaseDate}</Typography>
+        </Box>
       </CardContent>
+      <CardActions
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: 2,
+        }}
+      >
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                {...label}
+                icon={<FavoriteBorder />}
+                checkedIcon={<Favorite />}
+                checked={isFavorite}
+                onChange={handleFavoriteChange}
+              />
+            }
+            label="Favorite"
+          />
+        </FormGroup>
+        <Button onClick={handleOpen}>Details</Button>
+      </CardActions>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        sx={{
+          overflowY: 'scroll',
+          top: 0,
+          height: '100%',
+        }}
+        disableScrollLock={false}
+      >
+        <Box sx={style}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginBottom: '1rem',
+            }}
+          >
+            <Button onClick={handleClose}>Close</Button>
+          </Box>
+          <MovieDetails movie={movie} />
+        </Box>
+      </Modal>
     </Card>
   )
 }
