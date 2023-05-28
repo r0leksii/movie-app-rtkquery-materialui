@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MovieDetails } from './MovieDetails'
+import { useDispatch } from 'react-redux'
+import { addToFavorites, removeFromFavorites } from '../../store/favoritesSlice'
 import styles from './MovieCard.module.scss'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -19,12 +21,42 @@ export const MovieCard = ({ movie }) => {
     year: 'numeric',
   })
 
+  const dispatch = useDispatch()
+
+  const [isFavorite, setIsFavorite] = useState(false)
+
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || []
+    setIsFavorite(favorites.some((favorite) => favorite.id === movie.id))
+  }, [movie.id])
+
+  const handleFavoriteChange = (event) => {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || []
+
+    if (event.target.checked) {
+      if (!favorites.some((favorite) => favorite.id === movie.id)) {
+        // Add the movie to favorites if it's not already there
+        favorites.push(movie)
+        dispatch(addToFavorites(movie))
+      }
+    } else {
+      // Remove the movie from favorites
+      const index = favorites.findIndex((favorite) => favorite.id === movie.id)
+      if (index !== -1) {
+        favorites.splice(index, 1)
+        dispatch(removeFromFavorites(movie))
+      }
+    }
+
+    localStorage.setItem('favorites', JSON.stringify(favorites))
+    setIsFavorite(event.target.checked)
+  }
+
   const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -66,6 +98,8 @@ export const MovieCard = ({ movie }) => {
                     {...label}
                     icon={<FavoriteBorder />}
                     checkedIcon={<Favorite />}
+                    checked={isFavorite} // Add this line
+                    onChange={handleFavoriteChange} // Add this line
                   />
                 }
                 label="Add to favorites"
