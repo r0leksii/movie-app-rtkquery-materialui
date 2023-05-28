@@ -14,7 +14,7 @@ The application includes a variety of features that allow users to interact with
 ## Screenshots
 
 ![Screenshot 1](https://postimg.cc/wyB177rc)
-![Screenshot 2](https://postimg.cc/D8G8JVxD)
+[Web-capture-28-5-2023-225743-localhost.jpg](https://postimg.cc/D8G8JVxD)
 
 ## Technologies
 
