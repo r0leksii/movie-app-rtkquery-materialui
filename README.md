@@ -31,7 +31,6 @@ This project was created with:
 - MUI-Image (^1.0.7) for image rendering
 - react-infinite-scroll-component (^6.1.0) for infinite scroll functionality
 - react-redux (^8.0.5) for state management
-- sass (^1.62.1) for styling
 - Web Vitals (^2.1.4) for web performance
 - React testing library (^13.4.0) with jest-dom (^5.16.5) and user-event (^13.5.0) for testing
 
